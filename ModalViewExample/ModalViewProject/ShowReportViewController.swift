@@ -94,6 +94,18 @@ class ShowReportViewController: UIViewController {
         let complition: (() -> Void) = {
             DispatchQueue.main.async {
                 print("limitButtonTapped")
+                let swiftUIView = SkeletonGenerateReportView()
+                // Или
+                // let swiftUIView = GenerateReportView()
+                let hostingController = UIHostingController(rootView: swiftUIView)
+                hostingController.view.backgroundColor = .clear
+                hostingController.modalPresentationStyle = .overFullScreen
+                hostingController.hidesBottomBarWhenPushed = true
+                
+                DispatchQueue.main.async { [weak self] in
+                    guard let self else { return }
+                    self.present(hostingController, animated: true, completion: nil)
+                }
             }
         }
         return complition

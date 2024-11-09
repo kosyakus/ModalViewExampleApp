@@ -7,7 +7,6 @@
 
 import SwiftUI
 
-
 #Preview {
     GenerateReportView()
 }
@@ -25,43 +24,58 @@ struct GenerateReportView: View {
     
     
     var body: some View {
-        VStack(spacing: 16) {
-            
-            // Image at the top
-            Image("neuroOwlCircledPurpleLogo")
-                .resizable()
-                .frame(width: 150, height: 150)
-            
-            
-            ZStack(alignment: .leading) {
-                // Background gradient
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(Color.gray.opacity(0.2)) // Background color of the progress bar
-                    .frame(width: UIScreen.main.bounds.width - 64, height: 8)
-                
-                // Foreground gradient for progress
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(LinearGradient(gradient: Gradient(colors: [Color.red,
-                                                                     Color.orange]),
-                                         startPoint: .leading,
-                                         endPoint: .trailing))
-                    .frame(width: (UIScreen.main.bounds.width - 64) * CGFloat(progress), height: 8) // Adjust width based on progress value
-            }
-            .frame(width: UIScreen.main.bounds.width - 64, height: 8)
-            .animation(.linear(duration: 0.5))
-            
-            // Label
-            Text(text)
-                .font(.system(size: 14, weight: .medium))
-                .foregroundColor(Color.blue)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal)
-            
+        VStack {
             Spacer()
+            VStack {
+                // Image at the top
+                Image("reviewIcon")
+                    .resizable()
+                    .frame(width: 80, height: 80)
+                    .background(
+                        RoundedRectangle(
+                            cornerRadius: 20,
+                            style: .continuous
+                        )
+                        .fill(Color.white)
+                        .frame(height: 64)
+                        .frame(width: UIScreen.main.bounds.width)
+                        .padding([.top], -75)
+                    )
+                    .padding()
+                
+                ZStack(alignment: .leading) {
+                    // Background gradient
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(Color.gray.opacity(0.2)) // Background color of the progress bar
+                        .frame(width: UIScreen.main.bounds.width - 64, height: 8)
+                    
+                    // Foreground gradient for progress
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(LinearGradient(gradient:
+                                                Gradient(colors: [Color(UIColor(hex: "#5C4EF2")),
+                                                                  Color(UIColor(hex: "#1A96FF"))]),
+                                             startPoint: .leading,
+                                             endPoint: .trailing))
+                        .frame(width: (UIScreen.main.bounds.width - 64) * CGFloat(progress), height: 8) // Adjust width based on progress value
+                }
+                .frame(width: UIScreen.main.bounds.width - 64, height: 8)
+                .animation(.linear(duration: 0.5))
+                .padding()
+                
+                // Label
+                Text(text)
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundColor(Color.blue)
+                    .multilineTextAlignment(.center)
+                    .padding()
+            }
+            .frame(maxWidth: .infinity, alignment: .bottom)
+            .background(Color.white)
         }
         .onAppear {
             startFakeProgress()
         }
+        .background(Color(white: 0, opacity: 0.4))
     }
     
     
@@ -85,15 +99,15 @@ struct GenerateReportView: View {
         case 0.0...0.19:
             text = "Получаем данные с сервера..."
         case 0.2...0.498:
-            text = "Получаем данные с сервера..."
+            text = "Обновляем данные с сервера..."
         case 0.5...0.598:
-            text = "Получаем данные с сервера..."
+            text = "Нужно ещё немного времени..."
         case 0.599...0.698:
-            text = "Получаем данные с сервера..."
+            text = "Скоро загрузится..."
         case 0.699...0.89:
-            text = "Получаем данные с сервера..."
+            text = "Ещё чуть-чуть..."
         case 0.899...0.999:
-            text = "Получаем данные с сервера..."
+            text = "Уже почти..."
         default:
             text = "Получаем данные с сервера..."
         }
@@ -132,45 +146,3 @@ struct GenerateReportView: View {
         completeProgress()
     }
 }
-
-
-//struct GenerateReportView: View {
-//    @Environment(\.presentationMode) var presentationMode
-//
-//    @State private var progress: Double = 0.7 // For example, a 70% progress.
-//
-//        var body: some View {
-//            VStack(spacing: 24) {
-//
-//                // Image on top
-//                Image("neuroOwlCircledPurpleLogo")
-//                    .resizable()
-//                    .frame(width: 150, height: 150)
-//                    .cornerRadius(75)
-//                    .padding(.top, 32)
-//
-//                // Progress bar
-//                ProgressView(value: progress)
-//                    .progressViewStyle(LinearProgressViewStyle(tint: Color.blue))
-//                    .frame(height: 8)
-//                    .padding(.horizontal, 24)
-//                    .background(Color(UIColor.systemGray5)) // For background behind progress
-//                    .cornerRadius(4)
-//
-//                // Label below progress bar
-//                Text("В вашу подписку входит 10 бесплатных отчетов в месяц")
-//                    .font(.system(size: 14, weight: .medium))
-//                    .foregroundColor(Color.blue)
-//                    .multilineTextAlignment(.center)
-//
-//                Spacer()
-//            }
-//            .background(
-//                RoundedRectangle(cornerRadius: 24)
-//                    .fill(Color.white)
-//                    .shadow(radius: 10)
-//            )
-//            .padding()
-//            .frame(maxWidth: .infinity)
-//        }
-//}

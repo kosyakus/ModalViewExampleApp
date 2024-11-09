@@ -1,52 +1,14 @@
 //
-//  ReportsModalView.swift
-//  AppForReelSwiftUI
+//  SkeletonGenerateReportView.swift
+//  ModalViewExample
 //
-//  Created by Natalia Sinitsyna on 12.10.2024.
+//  Created by Natalia Sinitsyna on 09.11.2024.
 //
 
 import SwiftUI
 
-struct ReportsModalView: View {
+struct SkeletonGenerateReportView: View {
     @Environment(\.presentationMode) var presentationMode
-    
-    var limitAction: (() -> Void)?
-    var deleteAction: (() -> Void)?
-    var questionAction: (() -> Void)?
-    var likeAction: (() -> Void)?
-    var dislikeAction: (() -> Void)?
-    var sharedAction: (() -> Void)?
-    var reviewAction: (() -> Void)?
-    var onDismiss: (() -> Void)?
-    
-    @State var currentItem: Int
-    @ObservedObject var report: ReportsObjectModel
-    
-    @State private var isPositive: Bool? = nil
-    
-    init(
-        limitAction: (() -> Void)?,
-        deleteAction: (() -> Void)?,
-        questionAction: (() -> Void)?,
-        likeAction: (() -> Void)?,
-        dislikeAction: (() -> Void)?,
-        sharedAction: (() -> Void)?,
-        reviewAction: (() -> Void)?,
-        currentItem: Int,
-        report: ReportsObjectModel,
-        onDismiss: (() -> Void)? = nil
-    ) {
-        self.limitAction = limitAction
-        self.deleteAction = deleteAction
-        self.questionAction = questionAction
-        self.likeAction = likeAction
-        self.dislikeAction = dislikeAction
-        self.sharedAction = sharedAction
-        self.reviewAction = reviewAction
-        _currentItem = State(initialValue: currentItem)
-        self.report = report
-        self.onDismiss = onDismiss
-    }
     
     var body: some View {
         VStack {
@@ -56,16 +18,23 @@ struct ReportsModalView: View {
                 setUpTopView()
                 
                 // Description
-                if let data = report.data, !data.isEmpty, currentItem < data.count {
-                    Text(data[currentItem].answer ?? "Ошибка получения отчета")
-                        .font(.system(size: 14, weight: .regular))
-                        .foregroundColor(Color(UIColor(hex: "#40455E")))
-                } else {
-                    EmptyView() // Скрываем контент
-                        .onAppear {
-                            // Закрываем модальное окно
-                            presentationMode.wrappedValue.dismiss()
-                        }
+                VStack(alignment: .leading, spacing: 8) {
+                    SkeletonLoadingView(width: 350,
+                                        shape: RoundedRectangle(cornerRadius: 8),
+                                        animation: .easeIn(duration: 1).repeatForever(autoreverses: true),
+                                        gradient: Gradient(colors: [Color(UIColor(hex: "#0059C1").withAlphaComponent(0.2)), Color(UIColor(hex: "#6100FF").withAlphaComponent(0.2))]))
+                    SkeletonLoadingView(width: 380,
+                                        shape: RoundedRectangle(cornerRadius: 8),
+                                        animation: .easeIn(duration: 1).repeatForever(autoreverses: true),
+                                        gradient: Gradient(colors: [Color(UIColor(hex: "#0059C1").withAlphaComponent(0.2)), Color(UIColor(hex: "#6100FF").withAlphaComponent(0.2))]))
+                    SkeletonLoadingView(width: 350,
+                                        shape: RoundedRectangle(cornerRadius: 8),
+                                        animation: .easeIn(duration: 1).repeatForever(autoreverses: true),
+                                        gradient: Gradient(colors: [Color(UIColor(hex: "#0059C1").withAlphaComponent(0.2)), Color(UIColor(hex: "#6100FF").withAlphaComponent(0.2))]))
+                    SkeletonLoadingView(width: 180,
+                                        shape: RoundedRectangle(cornerRadius: 8),
+                                        animation: .easeIn(duration: 1).repeatForever(autoreverses: true),
+                                        gradient: Gradient(colors: [Color(UIColor(hex: "#0059C1").withAlphaComponent(0.2)), Color(UIColor(hex: "#6100FF").withAlphaComponent(0.2))]))
                 }
                 
                 // Button section
@@ -93,15 +62,7 @@ struct ReportsModalView: View {
             )
         }
         .background(Color(white: 0, opacity: 0.4))
-        .onDisappear {
-            onDismiss?()
-        }
-        .onChange(of: report.data ?? []) { _, newValue in
-            if report.data?.isEmpty == true {
-                self.presentationMode.wrappedValue.dismiss()
-                onDismiss?()
-            }
-        }
+        
         .onTapGesture {
             // Dismiss the view when tapped anywhere on the content
             presentationMode.wrappedValue.dismiss()
@@ -148,12 +109,11 @@ struct ReportsModalView: View {
         return HStack(spacing: 16) {
             Button(action: {
                 // Action for trash
-                deleteAction?()
             }) {
                 Image("trashTemplate")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .foregroundColor(Color(UIColor(hex: "#1027F2")))
+                    .foregroundColor(Color(UIColor(hex: "#1027F2").withAlphaComponent(0.3)))
                     .frame(width: 16, height: 16)
             }
             .frame(width: 24, height: 24)
@@ -162,12 +122,10 @@ struct ReportsModalView: View {
             
             Button(action: {
                 // Action for info
-                questionAction?()
-                presentationMode.wrappedValue.dismiss()
             }) {
                 Image("pictoIconQuestionMark")
                     .resizable()
-                    .foregroundColor(Color(UIColor(hex: "#1027F2")))
+                    .foregroundColor(Color(UIColor(hex: "#1027F2").withAlphaComponent(0.3)))
                     .frame(width: 16, height: 16)
             }
             
@@ -182,57 +140,54 @@ struct ReportsModalView: View {
             // Three buttons on the left
             HStack {
                 Button(action: {
-                    likeAction?()
-                    isPositive = true
+                   
                 }) {
                     HStack {
                         Image("heartIcon")
-                            .foregroundColor(Color(isPositive == true ? UIColor.red : UIColor(hex: "#1027F2")))
+                            .foregroundColor(Color(UIColor(hex: "#1027F2").withAlphaComponent(0.3)))
                         Text("Полезный")
                             .font(.system(size: 12, weight: .medium))
                             .lineLimit(1)
-                            .foregroundColor(Color(isPositive == true ? UIColor.red : UIColor(hex: "#1027F2")))
+                            .foregroundColor(Color(UIColor(hex: "#1027F2").withAlphaComponent(0.3)))
                     }
                     .frame(height: 16)
                     .padding(8)
                     .background(
-                        Color(isPositive == true ? UIColor(hex: "#FFE4E7") : UIColor(hex: "#0038FF").withAlphaComponent(0.1)))
+                        Color(UIColor(hex: "#0038FF").withAlphaComponent(0.1)))
                 }
                 .frame(height: 24)
                 .cornerRadius(30)
                 
                 Button(action: {
-                    dislikeAction?()
-                    isPositive = false
+                    
                 }) {
                     HStack {
                         Image("heartBrokenIcon")
-                            .foregroundColor(Color(isPositive == false ? UIColor(hex: "#7F1BFF") : UIColor(hex: "#1027F2")))
+                            .foregroundColor(Color(UIColor(hex: "#1027F2").withAlphaComponent(0.3)))
                         Text("Бесполезный ")
                             .font(.system(size: 12, weight: .medium))
                             .lineLimit(1)
-                            .foregroundColor(Color(isPositive == false ? UIColor(hex: "#7F1BFF") : UIColor(hex: "#1027F2")))
+                            .foregroundColor(Color(UIColor(hex: "#1027F2").withAlphaComponent(0.3)))
                     }
                     .frame(height: 16)
                     .padding(8)
-                    .background(Color(isPositive == false ? UIColor(hex: "#7F1BFF").withAlphaComponent(0.1) : UIColor(hex: "#0038FF").withAlphaComponent(0.1)))
+                    .background(Color(UIColor(hex: "#0038FF").withAlphaComponent(0.1)))
                 }
                 .frame(height: 24)
                 .cornerRadius(30)
                 
                 Button(action: {
-                    reviewAction?()
-                    presentationMode.wrappedValue.dismiss()
+                    
                 }) {
                     HStack {
                         Image("warningTriangle")
                             .resizable()
                             .aspectRatio(contentMode: .fit)
-                            .foregroundColor(Color(UIColor(hex: "#1027F2")))
+                            .foregroundColor(Color(UIColor(hex: "#1027F2").withAlphaComponent(0.3)))
                         Text("Жалоба")
                             .font(.system(size: 12, weight: .medium))
                             .lineLimit(1)
-                            .foregroundColor(Color(UIColor(hex: "#1027F2")))
+                            .foregroundColor(Color(UIColor(hex: "#1027F2").withAlphaComponent(0.3)))
                     }
                     .frame(height: 16)
                     .padding(8)
@@ -246,14 +201,13 @@ struct ReportsModalView: View {
             
             // Share button on the right
             Button(action: {
-                sharedAction?()
-                presentationMode.wrappedValue.dismiss()
+                
             }) {
                 Image("pictoIconShareDots")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 16, height: 16)
-                    .foregroundColor(Color(UIColor(hex: "#1027F2")))
+                    .foregroundColor(Color(UIColor(hex: "#1027F2").withAlphaComponent(0.3)))
             }
             .frame(width: 24, height: 24)
             .background(Color(UIColor(hex: "#0038FF").withAlphaComponent(0.1)))
@@ -264,19 +218,10 @@ struct ReportsModalView: View {
     
     private func setupNextPreviousButtonsView() -> some View {
         // Вычислить нужно ли показывать дополнительный блок кнопок вперед/назад
-        let needShowArrowButtons: Bool = report.data?.count ?? 0 > 1
         
-        if needShowArrowButtons {
             return AnyView(HStack {
-                
-                // Получаем информацию о том, активны ли кнопки вперед/назад
-                let buttonVisibility = determineButtonVisibility(currentItem: currentItem + 1, totalItems: report.data?.count ?? 0)
-                
+                                
                 Button(action: {
-                    if (currentItem - 1) < (report.data?.count ?? 0) && (currentItem - 1) >= 0 {
-                        currentItem -= 1
-                        print("actionPrevious tapped")
-                    }
                     
                 }) {
                     Image("pictoIconArrowRight")
@@ -284,59 +229,49 @@ struct ReportsModalView: View {
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 16, height: 16)
                         .padding(.horizontal, 8)
-                        .foregroundColor(buttonVisibility.leadingButtonView ? Color(UIColor(hex: "#1027F2")) : Color(UIColor(hex: "#59748C").withAlphaComponent(0.5)))
+                        .foregroundColor(Color(UIColor(hex: "#59748C").withAlphaComponent(0.5)))
                 }
                 .frame(width: 32, height: 32)
-                .background(buttonVisibility.leadingButtonView ? Color(UIColor(hex: "#1027F2").withAlphaComponent(0.1)) : Color(UIColor(hex: "#0038FF").withAlphaComponent(0.05)))
+                .background(Color(UIColor(hex: "#0038FF").withAlphaComponent(0.05)))
                 .cornerRadius(16)
-                .disabled(!buttonVisibility.leadingButtonView)
+                .disabled(true)
                 
-                Text("\(currentItem + 1) / \(report.data?.count ?? 0)")
+                Text("---")
                     .font(.system(size: 14, weight: .bold))
                     .padding(.horizontal, 2)
+                    .foregroundStyle(Color(UIColor.black.withAlphaComponent(0.3)))
                 
                 Button(action: {
-                    if currentItem + 1 < report.data?.count ?? 0 {
-                        currentItem += 1
-                        print("actionNext tapped")
-                    }
+                    
                 }) {
                     Image("pictoIconArrowLeft")
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 16, height: 16)
                         .padding(.horizontal, 8)
-                        .foregroundColor(buttonVisibility.trailingButtonView ? Color(UIColor(hex: "#1027F2")) : Color(UIColor(hex: "#59748C").withAlphaComponent(0.5)))
+                        .foregroundColor(Color(UIColor(hex: "#59748C").withAlphaComponent(0.5)))
                 }
                 .frame(width: 32, height: 32)
-                .background(buttonVisibility.trailingButtonView ? Color(UIColor(hex: "#1027F2").withAlphaComponent(0.1)) : Color(UIColor(hex: "#0038FF").withAlphaComponent(0.05)))
+                .background(Color(UIColor(hex: "#0038FF").withAlphaComponent(0.05)))
                 .cornerRadius(16)
-                .disabled(!buttonVisibility.trailingButtonView)
+                .disabled(true)
             }
                 .frame(alignment: .trailing))
-        }
-        else {
-            return AnyView(EmptyView())
-        }
-    }
-    
-    private func determineButtonVisibility(currentItem: Int, totalItems: Int) -> (leadingButtonView: Bool, trailingButtonView: Bool) {
-        let leadingButtonView = currentItem > 1
-        let trailingButtonView = currentItem < totalItems
-        return (leadingButtonView, trailingButtonView)
     }
     
     private func setupLimitButtonsView() -> some View {
         return AnyView(GradientButtonView(
             title: "Получить описание",
             action: {
-                limitAction?()
-                presentationMode.wrappedValue.dismiss()
             },
             gradientColors: [
-                Color(UIColor(hex: "#4B7EFF")),
-                Color(UIColor(hex: "#5D4FF3"))
+                Color(UIColor(hex: "#4B7EFF").withAlphaComponent(0.3)),
+                Color(UIColor(hex: "#5D4FF3").withAlphaComponent(0.3))
             ], showCounter: false
         ))
     }
+}
+
+#Preview {
+    SkeletonGenerateReportView()
 }
